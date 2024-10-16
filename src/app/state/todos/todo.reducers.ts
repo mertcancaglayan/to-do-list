@@ -1,6 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
 import { Todo } from '../../models/todo.model';
-import { addTodo, deleteTodo } from './todo.actions';
+import {
+  addTodo,
+  deleteTodo,
+  loadTodos,
+  saveTodosToLocalStorage,
+} from './todo.actions';
 
 export interface TodoState {
   todos: Todo[];
@@ -9,22 +14,31 @@ export interface TodoState {
 }
 
 export const initialState: TodoState = {
-  todos: [],
+  todos:
+    typeof window !== 'undefined'
+      ? JSON.parse(localStorage.getItem('todos') || '[]')
+      : [],
   error: null,
   status: 'pending',
 };
 
 export const todoReducer = createReducer(
   initialState,
-  on(addTodo, (state, { content }) => ({
-    ...state,
-    todos: [
-      ...state.todos,
-      { id: Date.now(), title: content, completed: false },
-    ],
-  })),
-  on(deleteTodo, (state, { id }) => ({
-    ...state,
-    todos: state.todos.filter((todo) => todo.id !== id),
-  }))
+  on(addTodo, (state, { content }) => {
+    const newTodo: Todo = { id: Date.now(), title: content, completed: false };
+    const updatedTodos = [...state.todos, newTodo];
+    localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    return { ...state, todos: updatedTodos };
+  }),
+  on(deleteTodo, (state, { id }) => {
+    const updatedTodos = state.todos.filter((todo) => todo.id !== id);
+    localStorage.setItem('todos', JSON.stringify(updatedTodos));
+    return { ...state, todos: updatedTodos };
+  }),
+  on(loadTodos, (state) => {
+    return {
+      ...state,
+      todos: JSON.parse(localStorage.getItem('todos') || '[]'),
+    };
+  })
 );

@@ -11,6 +11,7 @@
       <div class="input-group">
         <input
           #todoInput
+          (keyup.enter)="addTodo(todoInput.value); todoInput.value = ''"
           type="text"
           class="form-control"
           placeholder="Enter a new task..."
