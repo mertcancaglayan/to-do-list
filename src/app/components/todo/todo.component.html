@@ -1,0 +1,41 @@
+<div class="container mt-5">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <a class="navbar-brand" href="#">Todo App</a>
+  </nav>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+      <h5 class="mb-0">Add Todo</h5>
+    </div>
+    <div class="card-body">
+      <div class="input-group">
+        <input
+          #todoInput
+          type="text"
+          class="form-control"
+          placeholder="Enter a new task..."
+        />
+        <div class="input-group-append">
+          <button
+            class="btn btn-outline-primary"
+            (click)="addTodo(todoInput.value); todoInput.value = ''"
+          >
+            Add Todo
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ul class="list-group mt-4">
+    <li
+      *ngFor="let todo of todos$ | async; let i = index"
+      class="list-group-item d-flex justify-content-between align-items-center"
+    >
+      <span>{{ todo.title }}</span>
+      <button class="btn btn-danger btn-sm" (click)="deleteTodo(todo.id)">
+        Delete
+      </button>
+    </li>
+  </ul>
+</div>
